@@ -64,7 +64,7 @@ public class RetryProxy {
   
   /**
    * Create a proxy for an interface of an implementation class
-   * using the a set of retry policies specified by method name.
+   * using a set of retry policies specified by method name.
    * If no retry policy is defined for a method then a default of
    * {@link RetryPolicies#TRY_ONCE_THEN_FAIL} is used.
    * 

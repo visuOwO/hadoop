@@ -68,6 +68,10 @@ public class ContainerManagementProtocolProxy {
 
   public ContainerManagementProtocolProxy(Configuration conf,
       NMTokenCache nmTokenCache) {
+    StackTraceElement[] StackTraceElements = Thread.currentThread().getStackTrace();
+    for (int i = 0; i < StackTraceElements.length && i < 10; i++) {
+      LOG.info("StackTraceElements[" + i + "]=" + StackTraceElements[i]);
+    }
     this.conf = new Configuration(conf);
     this.nmTokenCache = nmTokenCache;
 

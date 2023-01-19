@@ -235,6 +235,10 @@ public class NMClientImpl extends NMClient {
   @Override
   public void increaseContainerResource(Container container)
       throws YarnException, IOException {
+    StackTraceElement[] StackTraceElements = Thread.currentThread().getStackTrace();
+    for (int i = 0; i < StackTraceElements.length && i < 10; i++) {
+      LOG.info("increaseContainerResource: " + StackTraceElements[i].getClassName() + " " + StackTraceElements[i].getMethodName() + " " + StackTraceElements[i].getLineNumber());
+    }
     ContainerManagementProtocolProxyData proxy = null;
     try {
       proxy = cmProxy.getProxy(

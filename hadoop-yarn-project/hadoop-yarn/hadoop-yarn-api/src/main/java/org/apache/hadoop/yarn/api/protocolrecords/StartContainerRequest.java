@@ -49,6 +49,7 @@ public abstract class StartContainerRequest {
         Records.newRecord(StartContainerRequest.class);
     request.setContainerLaunchContext(context);
     request.setContainerToken(container);
+    System.out.println("StartContainerRequest: " + request.getClass().getName());
     return request;
   }
 

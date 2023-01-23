@@ -322,6 +322,7 @@ public class AMRMClientImpl<T extends ContainerRequest> extends AMRMClient<T> {
       }
 
       try {
+        LOG.info("Tracing RMClient Class:");
         LOG.info(rmClient.getClass().getName());
         allocateResponse = rmClient.allocate(allocateRequest);
       } catch (ApplicationMasterNotRegisteredException e) {

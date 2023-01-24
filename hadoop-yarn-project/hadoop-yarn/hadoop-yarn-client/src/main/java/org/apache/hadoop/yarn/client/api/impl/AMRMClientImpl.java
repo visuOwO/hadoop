@@ -322,8 +322,8 @@ public class AMRMClientImpl<T extends ContainerRequest> extends AMRMClient<T> {
       }
 
       try {
-        LOG.info("Tracing RMClient Class:");
-        LOG.info(rmClient.getClass().getName());
+        System.out.println("Tracing RMClient Class:");
+        System.out.println(rmClient.getClass().getName());
         allocateResponse = rmClient.allocate(allocateRequest);
       } catch (ApplicationMasterNotRegisteredException e) {
         LOG.warn("ApplicationMaster is out of sync with ResourceManager,"

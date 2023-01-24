@@ -148,6 +148,10 @@ public final class DistributedScheduler extends AbstractRequestInterceptor {
   @Override
   public AllocateResponse allocate(AllocateRequest request) throws
       YarnException, IOException {
+    StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+    for (int i = 0; i < stackTraceElement.length && i<=10; i++) {
+      System.out.println("Tracing " + stackTraceElement[i].getClassName() + " : " + stackTraceElement[i].getMethodName() + " : " + stackTraceElement[i].getLineNumber());
+    }
     DistributedSchedulingAllocateRequest distRequest = RECORD_FACTORY
         .newRecordInstance(DistributedSchedulingAllocateRequest.class);
     distRequest.setAllocateRequest(request);

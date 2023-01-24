@@ -335,6 +335,10 @@ public class AMRMClientRelayer extends AbstractService
   @Override
   public AllocateResponse allocate(AllocateRequest allocateRequest)
       throws YarnException, IOException {
+    StackTraceElement[] stackTraceElement = Thread.currentThread().getStackTrace();
+    for (int i = 0; i < stackTraceElement.length && i<=10; i++) {
+      System.out.println(stackTraceElement[i].getClassName() + " : " + stackTraceElement[i].getMethodName() + " : " + stackTraceElement[i].getLineNumber());
+    }
     AllocateResponse allocateResponse = null;
     long startTime = System.currentTimeMillis();
     synchronized (this) {

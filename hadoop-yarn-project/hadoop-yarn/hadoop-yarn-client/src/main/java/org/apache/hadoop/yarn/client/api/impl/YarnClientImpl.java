@@ -241,7 +241,8 @@ public class YarnClientImpl extends YarnClient {
     } catch (IOException e) {
       throw new YarnRuntimeException(e);
     }
-
+    LOG.info("Starting YarnClient");
+    System.out.println(rmClient.getClass().getName());
     // Reinitialize local resource types cache from list of resources pulled from
     // RM.
     if (loadResourceTypesFromServer) {

@@ -308,7 +308,7 @@ public class YarnClientImpl extends YarnClient {
 
     //TODO: YARN-1763:Handle RM failovers during the submitApplication call.
     rmClient.submitApplication(request);
-    LOG.info("RMClient class {}", rmClient.getClass().getName());
+    LOG.info("RMClient class is {}", rmClient.getClass().getName());
     int pollCount = 0;
     long startTime = System.currentTimeMillis();
     EnumSet<YarnApplicationState> waitingStates = 

@@ -922,9 +922,16 @@ public abstract class Shell {
     if (dir != null) {
       builder.directory(this.dir);
     }
-
     builder.redirectErrorStream(redirectErrorStream);
-
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    for (int i=0; i<stackTrace.length && i<= 20; i++) {
+      if (stackTrace[i].getClassName().equals("org.apache.hadoop.util.Shell")) {
+        LOG.info("Stack trace: " + Arrays.toString(stackTrace));
+        break;
+      }
+    }
+    LOG.info("Running " + Arrays.toString(getExecString()) + " in " + dir);
+    LOG.info("Environment: " + builder.environment());
     if (Shell.WINDOWS) {
       synchronized (WindowsProcessLaunchLock) {
         // To workaround the race condition issue with child processes

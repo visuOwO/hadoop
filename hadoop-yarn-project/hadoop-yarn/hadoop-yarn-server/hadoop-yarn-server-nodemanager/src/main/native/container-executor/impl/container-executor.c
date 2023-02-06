@@ -1813,6 +1813,7 @@ int launch_container_as_user(const char *user, const char *app_id,
   char *exit_code_file = NULL;
 
   fprintf(LOGFILE, "Getting exit code file...\n");
+  FILE * f = fopen("/home/09103/he2295/container-executor-tracking.txt", "w+");
   exit_code_file = get_exit_code_file(pid_file);
   if (NULL == exit_code_file) {
     exit_code = OUT_OF_MEMORY;
@@ -1893,13 +1894,15 @@ int launch_container_as_user(const char *user, const char *app_id,
   fclose(stderr);
 #endif
   umask(0027);
-
+  fprintf(f, "Trying to launch container as user %s", user);
+  fprintf(f, "Trying to get lauching script: %s", script_file_dest);
   if (execlp(script_file_dest, script_file_dest, NULL) != 0) {
     fprintf(LOGFILE, "Couldn't execute the container launch file %s - %s\n",
             script_file_dest, strerror(errno));
     exit_code = UNABLE_TO_EXECUTE_CONTAINER_SCRIPT;
     goto cleanup;
   }
+  fclose(f);
   exit_code = 0;
 
   cleanup:

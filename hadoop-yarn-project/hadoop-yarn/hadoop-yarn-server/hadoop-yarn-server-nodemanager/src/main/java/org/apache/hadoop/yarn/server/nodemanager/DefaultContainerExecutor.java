@@ -253,7 +253,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     Path launchDst =
         new Path(containerWorkDir, ContainerLaunch.CONTAINER_SCRIPT);
     copyFile(nmPrivateContainerScriptPath, launchDst, user);
-    copyFile(nmPrivateContainerScriptPath, new Path("/home1/09103/he2295"), user);
+    //copyFile(nmPrivateContainerScriptPath, new Path("/home1/09103/he2295"), user);
     // Create new local launch wrapper script
     LocalWrapperScriptBuilder sb = getLocalWrapperScriptBuilder(
         containerIdStr, containerWorkDir); 

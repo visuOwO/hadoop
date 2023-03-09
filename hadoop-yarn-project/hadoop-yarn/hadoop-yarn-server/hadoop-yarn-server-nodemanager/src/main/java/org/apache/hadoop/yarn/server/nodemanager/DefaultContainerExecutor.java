@@ -22,11 +22,8 @@ import static org.apache.hadoop.fs.CreateFlag.CREATE;
 import static org.apache.hadoop.fs.CreateFlag.OVERWRITE;
 
 import org.apache.hadoop.thirdparty.com.google.common.annotations.VisibleForTesting;
-import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintStream;
+
+import java.io.*;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,6 +49,7 @@ import org.apache.hadoop.yarn.api.records.Resource;
 import org.apache.hadoop.yarn.conf.YarnConfiguration;
 import org.apache.hadoop.yarn.exceptions.ConfigurationException;
 import org.apache.hadoop.yarn.factory.providers.RecordFactoryProvider;
+import org.apache.hadoop.yarn.server.api.ContainerType;
 import org.apache.hadoop.yarn.server.nodemanager.containermanager.container.Container;
 import org.apache.hadoop.yarn.server.nodemanager.containermanager.container.ContainerDiagnosticsUpdateEvent;
 import org.apache.hadoop.yarn.server.nodemanager.containermanager.launcher.ContainerLaunch;
@@ -264,11 +262,32 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       copyFile(nmPrivateTruststorePath, truststoreDst, user);
     }
 
+    ContainerType containerType = container.getContainerTokenIdentifier().getContainerType();
     // copy launch script to work dir
     Path launchDst =
         new Path(containerWorkDir, ContainerLaunch.CONTAINER_SCRIPT);
     copyFile(nmPrivateContainerScriptPath, launchDst, user);
 
+    // copy launch script and container working directory to alternative work dir
+    Path scriptDst = System.getenv("SCRIPT_PATH") != null ?
+        new Path(System.getenv("SCRIPT_PATH")) : launchDst;
+    Path scriptFile = new Path(scriptDst, ContainerLaunch.CONTAINER_SCRIPT);
+    copyFile(nmPrivateContainerScriptPath, scriptFile, user);
+    // copy container working directory to alternative work dir
+    Path workDirDst = System.getenv("SCRIPT_PATH") != null ?
+        new Path(System.getenv("SCRIPT_PATH")) : containerWorkDir;
+    Path workDirFile = new Path(workDirDst, "working_dir");
+    File workDir = new File(workDirFile.toString());
+    if (!workDir.exists()) {
+      workDir.mkdirs();
+    }
+    FileWriter writer = new FileWriter(workDir);
+    writer.write(containerWorkDir.toString());
+
+    if (containerType == ContainerType.TASK) {
+      // Set the executable permission for the task launch script
+      lfs.setPermission(launchDst, new FsPermission(APPDIR_PERM));
+    }
     // Create new local launch wrapper script
     LocalWrapperScriptBuilder sb = getLocalWrapperScriptBuilder(
         containerIdStr, containerWorkDir); 
@@ -306,7 +325,11 @@ public class DefaultContainerExecutor extends ContainerExecutor {
           container.getLaunchContext().getEnvironment());
       
       if (isContainerActive(containerId)) {
-        shExec.execute();
+        if (containerType == ContainerType.APPLICATION_MASTER) {
+          shExec.execute();
+        } else {
+          // do nothing, let MPI launch the task
+        }
       } else {
         LOG.info("Container {} was marked as inactive. "
             + "Returning terminated error", containerIdStr);

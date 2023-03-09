@@ -273,16 +273,20 @@ public class DefaultContainerExecutor extends ContainerExecutor {
         new Path(System.getenv("SCRIPT_PATH")) : launchDst;
     Path scriptFile = new Path(scriptDst, ContainerLaunch.CONTAINER_SCRIPT);
     copyFile(nmPrivateContainerScriptPath, scriptFile, user);
-    // copy container working directory to alternative work dir
-    Path workDirDst = System.getenv("SCRIPT_PATH") != null ?
-        new Path(System.getenv("SCRIPT_PATH")) : containerWorkDir;
-    Path workDirFile = new Path(workDirDst, "working_dir");
-    File workDir = new File(workDirFile.toString());
-    if (!workDir.exists()) {
-      workDir.mkdirs();
+
+    if (containerType == ContainerType.TASK) {
+      // copy container working directory to alternative work dir if it is a task
+      Path workDirDst = System.getenv("SCRIPT_PATH") != null ?
+              new Path(System.getenv("SCRIPT_PATH")) : containerWorkDir;
+      Path workDirFile = new Path(workDirDst, "working_dir");
+      File workDir = new File(workDirFile.toString());
+      if (!workDir.exists()) {
+        workDir.mkdirs();
+      }
+      FileWriter writer = new FileWriter(workDir);
+      writer.write(containerWorkDir.toString());
+      writer.close();
     }
-    FileWriter writer = new FileWriter(workDir);
-    writer.write(containerWorkDir.toString());
 
     if (containerType == ContainerType.TASK) {
       // Set the executable permission for the task launch script

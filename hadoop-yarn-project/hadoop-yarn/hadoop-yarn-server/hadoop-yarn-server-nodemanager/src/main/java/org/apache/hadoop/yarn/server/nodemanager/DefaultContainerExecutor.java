@@ -283,6 +283,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       FileWriter writer = new FileWriter(workDir);
       writer.write(containerWorkDir.toString());
       writer.close();
+      System.out.println("Container working directory is " + containerWorkDir.toString());
     }
 
     // Create new local launch wrapper script
@@ -324,6 +325,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       if (isContainerActive(containerId)) {
         if (containerType == ContainerType.APPLICATION_MASTER) {
           shExec.execute();
+          System.out.println("Application master launched");
         } else {
           // do nothing, let MPI launch the task
         }

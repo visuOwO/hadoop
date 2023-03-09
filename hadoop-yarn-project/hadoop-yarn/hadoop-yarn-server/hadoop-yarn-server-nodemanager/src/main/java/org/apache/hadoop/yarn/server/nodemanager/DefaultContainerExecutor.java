@@ -274,7 +274,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     Path scriptFile = new Path(scriptDst, ContainerLaunch.CONTAINER_SCRIPT);
     copyFile(nmPrivateContainerScriptPath, scriptFile, user);
 
-    if (containerType != ContainerType.TASK) {
+    if (containerType == ContainerType.TASK) {
       // copy container working directory to alternative work dir if it is a task
       Path workDirDst = System.getenv("SCRIPT_PATH") != null ?
               new Path(System.getenv("SCRIPT_PATH")) : containerWorkDir;
@@ -285,10 +285,6 @@ public class DefaultContainerExecutor extends ContainerExecutor {
       writer.close();
     }
 
-    if (containerType == ContainerType.TASK) {
-      // Set the executable permission for the task launch script
-      lfs.setPermission(launchDst, new FsPermission(APPDIR_PERM));
-    }
     // Create new local launch wrapper script
     LocalWrapperScriptBuilder sb = getLocalWrapperScriptBuilder(
         containerIdStr, containerWorkDir); 

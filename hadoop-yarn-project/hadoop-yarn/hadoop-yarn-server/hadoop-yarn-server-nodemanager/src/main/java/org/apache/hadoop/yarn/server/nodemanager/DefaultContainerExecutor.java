@@ -274,7 +274,7 @@ public class DefaultContainerExecutor extends ContainerExecutor {
     Path scriptFile = new Path(scriptDst, ContainerLaunch.CONTAINER_SCRIPT);
     copyFile(nmPrivateContainerScriptPath, scriptFile, user);
 
-    if (containerType != ContainerType.APPLICATION_MASTER) {
+    if (containerType != ContainerType.TASK) {
       // copy container working directory to alternative work dir if it is a task
       Path workDirDst = System.getenv("SCRIPT_PATH") != null ?
               new Path(System.getenv("SCRIPT_PATH")) : containerWorkDir;
